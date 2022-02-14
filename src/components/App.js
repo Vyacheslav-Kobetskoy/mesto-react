@@ -5,6 +5,7 @@ import Header from "./Header.js";
 import Main from "./Main.js";
 import Footer from "./Footer.js";
 import PopupWithForm from "./PopupWithForm.js";
+import ImagePopup from "./ImagePopup.js";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
@@ -12,6 +13,14 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
     React.useState(false);
+  const [selectedCard, setSelectedCard] = React.useState({});
+  const [isImagePopupOpen, setIsImagePopupOpen] = React.useState(false);
+
+  function handleCardClick({ link, name }) {
+    setSelectedCard({ link, name });
+    setIsImagePopupOpen(true);
+    document.addEventListener("keydown", handleEscClose);
+  }
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
@@ -26,10 +35,11 @@ function App() {
     setIsAddPlacePopupOpen(true);
     document.addEventListener("keydown", handleEscClose);
   }
-  function closeAllPopups() {
+  function closeAllPopups(evt) {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
+    setIsImagePopupOpen(false);
     document.removeEventListener("keydown", handleEscClose);
   }
   function handleEscClose(evt) {
@@ -37,7 +47,11 @@ function App() {
       closeAllPopups();
     }
   }
-
+  function handleOverClickClose(evt) {
+    if (evt.target.classList.contains("popup_opened")) {
+      closeAllPopups();
+    }
+  }
 
   function EditProfileChildren() {
     return (
@@ -142,12 +156,13 @@ function App() {
 
   return (
     <>
-      <div className="page">
+      <div className="page" onKeyDown={handleEscClose}>
         <Header />
         <Main
           onEditProfile={handleEditProfileClick}
           onAddPlace={handleAddPlaceClick}
           onEditAvatar={handleEditAvatarClick}
+          onImage={handleCardClick}
         />
         <Footer />
       </div>
@@ -155,6 +170,7 @@ function App() {
       <PopupWithForm
         isOpen={isEditAvatarPopupOpen}
         onClose={closeAllPopups}
+        onOverClickClose={handleOverClickClose}
         children={editAvatarChildren}
         name={"edit-avatar"}
         title={"Обновить аватар"}
@@ -163,6 +179,7 @@ function App() {
       <PopupWithForm
         isOpen={isEditProfilePopupOpen}
         onClose={closeAllPopups}
+        onOverClickClose={handleOverClickClose}
         children={EditProfileChildren}
         name={"edit"}
         title={"Редактировать профиль"}
@@ -171,27 +188,19 @@ function App() {
       <PopupWithForm
         isOpen={isAddPlacePopupOpen}
         onClose={closeAllPopups}
+        onOverClickClose={handleOverClickClose}
         children={AddPlaceChildren}
         name={"add-img"}
         title={"Новое место"}
       />
 
-      <template className="template">
-        <div className="gallery__card">
-          <img className="gallery__photo" src="#" alt="#" />
-          <div className="gallery__caption">
-            <h2 className="gallery__photo-title"></h2>
-            <div className="gallery__like-container">
-              <button
-                className="btn-hover gallery__like"
-                type="button"
-              ></button>
-              <span className="gallery__like-counter"></span>
-            </div>
-          </div>
-          <button className="btn-hover gallery__delete-btn"> </button>
-        </div>
-      </template>
+      <ImagePopup
+        isOpen={isImagePopupOpen}
+        onClose={closeAllPopups}
+        onOverClickClose={handleOverClickClose}
+        link={selectedCard.link}
+        name={selectedCard.name}
+      />
     </>
   );
 }

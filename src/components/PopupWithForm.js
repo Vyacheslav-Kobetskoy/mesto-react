@@ -1,6 +1,7 @@
 function PopupWithForm(props) {
   return (
     <article
+      onClick={props.onOverClickClose}
       className={`popup popup_type_${props.name} ${
         props.isOpen ? "popup_opened" : ""
       }`}
