@@ -147,13 +147,11 @@ function App() {
       </>
     );
   }
-
   // function deleteCardChildren() {
   //   return (
   //     <input type="submit" value="Да" className="btn-hover popup__save-btn" />
   //   );
   // }
-
   return (
     <>
       <div className="page" onKeyDown={handleEscClose}>
