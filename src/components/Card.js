@@ -43,7 +43,7 @@ function Card(props) {
       </div>
       <button
         className={`btn-hover gallery__delete-btn ${
-          isOwn ? "" : "gallery__delete-btn_hidden"
+          !isOwn && "gallery__delete-btn_hidden"
         }`}
         onClick={handleDeleteClick}
       ></button>

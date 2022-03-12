@@ -2,7 +2,7 @@ function ImagePopup(props) {
   return (
     <article
       onClick={props.onOverClickClose}
-      className={`popup zoom ${props.isOpen ? "popup_opened" : ""}`}
+      className={`popup zoom ${props.isOpen && "popup_opened"}`}
       aria-label="Попап"
     >
       <div className="zoom__container">

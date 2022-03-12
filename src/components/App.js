@@ -22,9 +22,14 @@ function App() {
   const [currentUser, setCurrentUser] = React.useState({});
 
   React.useEffect(() => {
-    api.getProfile().then((profileInfo) => {
-      setCurrentUser(profileInfo);
-    });
+    api
+      .getProfile()
+      .then((profileInfo) => {
+        setCurrentUser(profileInfo);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   function handleCardClick({ link, name }) {
@@ -51,22 +56,6 @@ function App() {
     setIsImagePopupOpen(false);
   }
 
-  React.useEffect(() => {
-    const closeByEscape = (e) => {
-      if (e.key === "Escape") {
-        closeAllPopups();
-      }
-    };
-    document.addEventListener("keydown", closeByEscape);
-    return () => document.removeEventListener("keydown", closeByEscape);
-  }, []);
-
-  function handleOverClickClose(evt) {
-    if (evt.target.classList.contains("popup_opened")) {
-      closeAllPopups();
-    }
-  }
-
   function handleUpdateUser({ name, about }) {
     api
       .patchEditProfile(name, about)
@@ -75,41 +64,64 @@ function App() {
   }
 
   function handleUpdateAvatar({ avatar }) {
-    api.patchAvatar(avatar).then((profileInfo) => setCurrentUser(profileInfo));
+    api
+      .patchAvatar(avatar)
+      .then((profileInfo) => setCurrentUser(profileInfo))
+      .catch((err) => {
+        console.log(err);
+      });
     closeAllPopups();
   }
 
   const [cards, setCards] = React.useState([]);
 
   function handleCardDelete(card) {
-    api.deleteCard(card._id).then(() => {
-      setCards((state) =>
-        state.filter((stateCard) => stateCard._id !== card._id)
-      );
-    });
+    api
+      .deleteCard(card._id)
+      .then(() => {
+        setCards((state) =>
+          state.filter((stateCard) => stateCard._id !== card._id)
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
-    api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
-      setCards((state) =>
-        state.map((stateCard) =>
-          stateCard._id === card._id ? newCard : stateCard
-        )
-      );
-    });
+    api
+      .changeLikeCardStatus(card._id, isLiked)
+      .then((newCard) => {
+        setCards((state) =>
+          state.map((stateCard) =>
+            stateCard._id === card._id ? newCard : stateCard
+          )
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   React.useEffect(() => {
-    api.getInitialCards().then((initialCards) => {
-      setCards(initialCards);
-    });
+    api
+      .getInitialCards()
+      .then((initialCards) => {
+        setCards(initialCards);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   function handleAddPlaceSubmit({ newCardTitle, newCardLink }) {
     api
       .postAddCard(newCardTitle, newCardLink)
-      .then((newCard) => setCards([newCard, ...cards]));
+      .then((newCard) => setCards([newCard, ...cards]))
+      .catch((err) => {
+        console.log(err);
+      });
     closeAllPopups();
   }
 
@@ -132,28 +144,24 @@ function App() {
       <EditProfilePopup
         isOpen={isEditProfilePopupOpen}
         onClose={closeAllPopups}
-        onOverClickClose={handleOverClickClose}
         onUpdateUser={handleUpdateUser}
       />
 
       <EditAvatarPopup
         isOpen={isEditAvatarPopupOpen}
         onClose={closeAllPopups}
-        onOverClickClose={handleOverClickClose}
         onUpdateAvatar={handleUpdateAvatar}
       />
 
       <AddPlacePopup
         isOpen={isAddPlacePopupOpen}
         onClose={closeAllPopups}
-        onOverClickClose={handleOverClickClose}
         onAddPlace={handleAddPlaceSubmit}
       />
 
       <ImagePopup
         isOpen={isImagePopupOpen}
         onClose={closeAllPopups}
-        onOverClickClose={handleOverClickClose}
         link={selectedCard.link}
         name={selectedCard.name}
       />

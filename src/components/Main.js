@@ -1,37 +1,10 @@
 import React, { useContext } from "react";
 import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
-import ReactDOM from "react-dom";
 
 import Card from "./Card.js";
 
 function Main(props) {
   const { currentUser } = useContext(CurrentUserContext);
-
-  React.useEffect(() => {
-    ReactDOM.render(
-      props.cards.map((card) => {
-        return (
-          <div className="template" key={card._id}>
-            <CurrentUserContext.Provider value={{ currentUser }}>
-              <Card
-                card={card}
-                onImage={props.onImage}
-                onCardLike={props.onCardLike}
-                onCardDelete={props.onCardDelete}
-              />
-            </CurrentUserContext.Provider>
-          </div>
-        );
-      }),
-      document.querySelector(".gallery")
-    );
-  }, [
-    props.cards,
-    currentUser,
-    props.onImage,
-    props.onCardLike,
-    props.onCardDelete,
-  ]);
 
   return (
     <main className="main">
@@ -65,7 +38,20 @@ function Main(props) {
         ></button>
       </section>
 
-      <section className="gallery" aria-label="Галерея"></section>
+      <section className="gallery" aria-label="Галерея">
+        {props.cards.map((card) => {
+          return (
+            <div className="template" key={card._id}>
+              <Card
+                card={card}
+                onImage={props.onImage}
+                onCardLike={props.onCardLike}
+                onCardDelete={props.onCardDelete}
+              />
+            </div>
+          );
+        })}
+      </section>
     </main>
   );
 }

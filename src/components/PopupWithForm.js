@@ -1,7 +1,25 @@
+import React from "react";
+
 function PopupWithForm(props) {
+  React.useEffect(() => {
+    const closeByEscape = (e) => {
+      if (e.key === "Escape") {
+        props.onClose();
+      }
+    };
+    document.addEventListener("keydown", closeByEscape);
+    return () => document.removeEventListener("keydown", closeByEscape);
+  }, [props]);
+
+  function handleOverClickClose(evt) {
+    if (evt.target.classList.contains("popup_opened")) {
+      props.onClose();
+    }
+  }
+
   return (
     <article
-      onClick={props.onOverClickClose}
+      onClick={handleOverClickClose}
       className={`popup popup_type_${props.name} ${
         props.isOpen ? "popup_opened" : ""
       }`}
