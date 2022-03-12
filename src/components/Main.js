@@ -2,49 +2,22 @@ import React, { useContext } from "react";
 import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import ReactDOM from "react-dom";
 
-import api from "../utils/Api.js";
 import Card from "./Card.js";
 
 function Main(props) {
-  const [cards, setCards] = React.useState([]);
   const { currentUser } = useContext(CurrentUserContext);
 
-  function handleCardDelete(card) {
-    api.deleteCard(card._id).then(() => {
-      setCards((state) =>
-        state.filter((stateCard) => stateCard._id !== card._id)
-      );
-    });
-  }
-
   React.useEffect(() => {
-    api.getInitialCards().then((initialCards) => {
-      setCards(initialCards);
-    });
-  }, []);
-
-  React.useEffect(() => {
-    function handleCardLike(card) {
-      const isLiked = card.likes.some((i) => i._id === currentUser._id);
-      api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
-        setCards((state) =>
-          state.map((stateCard) =>
-            stateCard._id === card._id ? newCard : stateCard
-          )
-        );
-      });
-    }
-
     ReactDOM.render(
-      cards.map((card) => {
+      props.cards.map((card) => {
         return (
           <div className="template" key={card._id}>
             <CurrentUserContext.Provider value={{ currentUser }}>
               <Card
                 card={card}
                 onImage={props.onImage}
-                onCardLike={handleCardLike}
-                onCardDelete={handleCardDelete}
+                onCardLike={props.onCardLike}
+                onCardDelete={props.onCardDelete}
               />
             </CurrentUserContext.Provider>
           </div>
@@ -52,7 +25,13 @@ function Main(props) {
       }),
       document.querySelector(".gallery")
     );
-  }, [cards, currentUser, props.onImage])
+  }, [
+    props.cards,
+    currentUser,
+    props.onImage,
+    props.onCardLike,
+    props.onCardDelete,
+  ]);
 
   return (
     <main className="main">
