@@ -6,32 +6,53 @@ import api from "../utils/Api.js";
 import Card from "./Card.js";
 
 function Main(props) {
-  const [cards, setCards] = React.useState();
+  const [cards, setCards] = React.useState([]);
   const { currentUser } = useContext(CurrentUserContext);
+
+  function handleCardDelete(card) {
+    api.deleteCard(card._id).then(() => {
+      setCards((state) =>
+        state.filter((stateCard) => stateCard._id !== card._id)
+      );
+    });
+  }
 
   React.useEffect(() => {
     api.getInitialCards().then((initialCards) => {
       setCards(initialCards);
-      ReactDOM.render(
-        initialCards.map((card) => {
-          return (
-            <div className="template" key={card._id}>
-              <CurrentUserContext.Provider value={{ currentUser }}>
-                <Card
-                  name={card.name}
-                  link={card.link}
-                  likes={card.likes}
-                  ownerId={card.owner._id}
-                  onImage={props.onImage}
-                />
-              </CurrentUserContext.Provider>
-            </div>
-          );
-        }),
-        document.querySelector(".gallery")
-      );
     });
-  }, [props.onImage,currentUser]);
+  }, []);
+
+  React.useEffect(() => {
+    function handleCardLike(card) {
+      const isLiked = card.likes.some((i) => i._id === currentUser._id);
+      api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
+        setCards((state) =>
+          state.map((stateCard) =>
+            stateCard._id === card._id ? newCard : stateCard
+          )
+        );
+      });
+    }
+
+    ReactDOM.render(
+      cards.map((card) => {
+        return (
+          <div className="template" key={card._id}>
+            <CurrentUserContext.Provider value={{ currentUser }}>
+              <Card
+                card={card}
+                onImage={props.onImage}
+                onCardLike={handleCardLike}
+                onCardDelete={handleCardDelete}
+              />
+            </CurrentUserContext.Provider>
+          </div>
+        );
+      }),
+      document.querySelector(".gallery")
+    );
+  }, [cards, currentUser, props.onImage])
 
   return (
     <main className="main">

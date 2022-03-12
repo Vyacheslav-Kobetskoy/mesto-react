@@ -72,7 +72,7 @@ function App() {
   // }
 
   return (
-    <CurrentUserContext.Provider value={{currentUser}}>
+    <CurrentUserContext.Provider value={{ currentUser }}>
       <div className="page">
         <Header />
         <Main
@@ -83,27 +83,6 @@ function App() {
         />
         <Footer />
       </div>
-
-      <PopupWithForm
-        isOpen={isEditAvatarPopupOpen}
-        onClose={closeAllPopups}
-        onOverClickClose={handleOverClickClose}
-        name={"edit-avatar"}
-        title={"Обновить аватар"}
-        buttonText={"Сохранить"}
-      >
-        <div className="popup__input-container">
-          <input
-            id="linkAvatar"
-            className="popup__input-text popup__input-text_type_link-Avatar"
-            name="linkAvatar"
-            type="url"
-            placeholder="Ссылка на аватар"
-            required
-          />
-          <span id="linkAvatar-error" className="popup__input-error"></span>
-        </div>
-      </PopupWithForm>
 
       <PopupWithForm
         isOpen={isEditProfilePopupOpen}

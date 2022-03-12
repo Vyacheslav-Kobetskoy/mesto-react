@@ -77,6 +77,10 @@ class Api {
       headers: this._headers,
     }).then((res) => this._checkResult(res));
   }
+
+  changeLikeCardStatus(cardId, isLiked) {
+    return isLiked ? this.deleteLike(cardId) : this.putLike(cardId);
+  }
 }
 
 const api = new Api({
