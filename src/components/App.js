@@ -59,7 +59,10 @@ function App() {
   function handleUpdateUser({ name, about }) {
     api
       .patchEditProfile(name, about)
-      .then((profileInfo) => setCurrentUser(profileInfo));
+      .then((profileInfo) => setCurrentUser(profileInfo))
+      .catch((err) => {
+        console.log(err);
+      });
     closeAllPopups();
   }
 
